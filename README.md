@@ -7,5 +7,5 @@ Data grabbed from Community Spreadsheet in the Discord
 
 https://wakfu-sublimations.noredlace.com/
 
-[SiteExample](/docs/SiteExample.png)
+<img src='./docs/SiteExample.png'>
 
