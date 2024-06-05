@@ -14,7 +14,5 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-      with:
-        context: wakfu-sublimations-site
     - name: Build the Docker image
       run: docker build --file ./wakfu-sublimations-site/Dockerfile --tag my-image-name:$(date +%s)
