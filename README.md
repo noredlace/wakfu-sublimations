@@ -9,3 +9,4 @@ https://wakfu-sublimations.noredlace.com/
 
 <img src='./docs/SiteExample.png'>
 
+Test
