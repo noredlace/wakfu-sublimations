@@ -1,39 +1,47 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import { Button, Header, HeaderName } from '@carbon/react'
+import { Button, Content, Grid, Column, TextInput, Select, SelectItem, DataTable, Table, TableHead, TableRow, TableHeader, TableBody, TableCell } from '@carbon/react'
 import './App.css'
+import HeaderComponent from './components/HeaderComponent'
+import TableComponent from './components/TableComponent'
+
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
     <>
-    <Header>
-            <HeaderName prefix="Wakfu Sublimations">
-              </HeaderName>
-          </Header>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <Button onClick={() => setCount((count) => count + 1)}>cc is {count}</Button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <HeaderComponent />
+      
+      <Content>
+        <Grid>
+          <Column lg={16} md={8} sm={4}>
+            <h1>Wakfu Sublimations</h1>
+            <p>Filter and search through sublimation data</p>
+
+            <div style={{ marginBottom: '2rem' }}>
+              <Select
+                id="socket-filter"
+                labelText="Socket Filter"
+                defaultValue=""
+              >
+                <SelectItem value="" text="All Sockets" />
+                <SelectItem value="red" text="Red Socket" />
+                <SelectItem value="blue" text="Blue Socket" />
+                <SelectItem value="green" text="Green Socket" />
+                <SelectItem value="yellow" text="Yellow Socket" />
+              </Select>
+            </div>
+            
+            <div style={{ marginBottom: '2rem' }}>
+              <Button onClick={() => setCount((count) => count + 1)}>
+                Search
+              </Button>
+            </div>
+
+            <TableComponent />
+          </Column>
+        </Grid>
+      </Content>
     </>
   )
 }
