@@ -1,4 +1,4 @@
-import { DataTable, Table, TableHead, TableRow, TableHeader, TableBody, TableCell, TableToolbar, TableToolbarSearch, TableToolbarContent } from '@carbon/react'
+import { DataTable, Table, TableHead, TableRow, TableHeader, TableBody, TableCell, TableToolbar, TableToolbarSearch, TableToolbarContent, Button, Grid, Column, Select, SelectItem } from '@carbon/react'
 import { useState } from 'react'
 import sublimations from '../assets/data/sublimations.json'
 
@@ -41,6 +41,113 @@ const renderSocketCell = (value: string) => {
           </span>
         );
       })}
+    </div>
+  );
+};
+
+// Socket order filter component
+const SocketOrderFilter = ({ 
+  socketOrder, 
+  onSocketOrderChange, 
+  onReset 
+}: {
+  socketOrder: string[];
+  onSocketOrderChange: (index: number, value: string) => void;
+  onReset: () => void;
+}) => {
+  const socketOptions = [
+    { value: '', text: 'Any Color' },
+    { value: 'R', text: 'Red' },
+    { value: 'B', text: 'Blue' },
+    { value: 'G', text: 'Green' },
+    { value: 'Y', text: 'Yellow (Wild)' }
+  ];
+
+  return (
+    <div style={{ 
+      padding: '1rem', 
+      backgroundColor: '#f4f4f4', 
+      marginBottom: '1rem',
+      borderRadius: '4px'
+    }}>
+      <h3 style={{ marginBottom: '1rem', marginTop: 0 }}>Socket Order Filter</h3>
+      <p style={{ marginBottom: '1rem', fontSize: '0.875rem', color: '#666' }}>
+        Filter by exact socket order. Yellow acts as a wild card that matches any color. Order matters.
+      </p>
+      
+      <Grid>
+        {socketOrder.map((socket, index) => (
+          <Column lg={3} md={6} sm={4} key={index}>
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '8px',
+              padding: '8px',
+              border: '1px solid #e0e0e0',
+              borderRadius: '4px',
+              backgroundColor: socket ? '#f0f8ff' : '#ffffff'
+            }}>
+              <div style={{ position: 'relative' }}>
+                <div style={{
+                  backgroundColor: '#0f62fe',
+                  color: 'white',
+                  borderRadius: '50%',
+                  width: '20px',
+                  height: '20px',
+                  fontSize: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 'bold'
+                }}>
+                  {index + 1}
+                </div>
+              </div>
+              <Select
+                id={`socket-${index}`}
+                labelText=""
+                value={socket}
+                onChange={(e) => onSocketOrderChange(index, e.target.value)}
+                size="sm"
+              >
+                {socketOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value} text={option.text} />
+                ))}
+              </Select>
+              {socket && socket !== 'Y' && getSocketImage(socket) && (
+                <img 
+                  src={getSocketImage(socket)!} 
+                  alt={`${socket} Socket`} 
+                  style={{ width: '20px', height: '20px' }}
+                  title={`${socket} Socket`}
+                />
+              )}
+              {socket === 'Y' && (
+                <div style={{ 
+                  width: '20px', 
+                  height: '20px', 
+                  backgroundColor: '#f1c40f', 
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '12px',
+                  fontWeight: 'bold',
+                  color: 'white'
+                }}>
+                  ?
+                </div>
+              )}
+            </div>
+          </Column>
+        ))}
+      </Grid>
+      
+      <div style={{ marginTop: '1rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <Button onClick={onReset} kind="secondary" size="sm">
+          Reset Socket Order
+        </Button>
+      </div>
     </div>
   );
 };
@@ -105,21 +212,135 @@ const headers = [
 
 export default function TableComponent() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [socketOrder, setSocketOrder] = useState<string[]>(['', '', '', '']);
 
-  const filteredRows = rows.filter(sublimation => 
-    sublimation.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    sublimation.socket.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    sublimation.tier1.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    sublimation.tier2.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    sublimation.tier3.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    sublimation.maxLevel.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    sublimation.obtainedFrom.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    sublimation.sincePatch.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    sublimation.notes.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Helper function to check if a socket pattern matches
+  const checkSocketPattern = (sublimationSockets: string[], pattern: string[]): boolean => {
+    for (let startPos = 0; startPos <= sublimationSockets.length - pattern.length; startPos++) {
+      let matches = 0;
+      for (let i = 0; i < pattern.length; i++) {
+        if (pattern[i] === 'Y' || pattern[i] === sublimationSockets[startPos + i]) {
+          matches++;
+        }
+      }
+      if (matches === pattern.length) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  // Apply both search and socket order filters
+  const filteredRows = rows.filter(sublimation => {
+    // Text search filter
+    const searchMatch = 
+      sublimation.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      sublimation.socket.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      sublimation.tier1.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      sublimation.tier2.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      sublimation.tier3.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      sublimation.maxLevel.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      sublimation.obtainedFrom.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      sublimation.sincePatch.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      sublimation.notes.toLowerCase().includes(searchTerm.toLowerCase());
+
+    if (!searchMatch) return false;
+
+    // Socket order filter - check if any socket order filters are set
+    const hasSocketOrderFilters = socketOrder.some(filter => filter !== '');
+    if (!hasSocketOrderFilters) return true;
+
+    // Get the non-empty filters
+    const activeFilters = socketOrder.filter(filter => filter !== '');
+    
+    // Get the sublimation's socket order
+    const sublimationSocketOrder = [sublimation.socket1, sublimation.socket2, sublimation.socket3];
+    
+    // We need at least 3 out of 4 filters to match (or all active filters if less than 4)
+    const minRequiredMatches = Math.min(3, activeFilters.length);
+    
+    // Check if any valid 3-color combination exists
+    // For RRBB, we need to check if RRB or RBB can be found in the sublimation
+    
+    // Try to find any valid 3-color combination
+    for (let startPos = 0; startPos <= sublimationSocketOrder.length - minRequiredMatches; startPos++) {
+      let filterIndex = 0;
+      let sublimationIndex = startPos;
+      let currentMatchCount = 0;
+      
+      while (filterIndex < activeFilters.length && sublimationIndex < sublimationSocketOrder.length) {
+        const currentFilter = activeFilters[filterIndex];
+        const currentSublimationSocket = sublimationSocketOrder[sublimationIndex];
+        
+        // Yellow (Y) is wild and matches any color
+        if (currentFilter === 'Y') {
+          filterIndex++;
+          sublimationIndex++;
+          currentMatchCount++;
+          continue;
+        }
+        
+        // Check if the current socket matches the current filter
+        if (currentFilter === currentSublimationSocket) {
+          filterIndex++;
+          sublimationIndex++;
+          currentMatchCount++;
+        } else {
+          // Move to next sublimation socket to try to match
+          sublimationIndex++;
+        }
+      }
+      
+      // If we found enough matches, this row qualifies
+      if (currentMatchCount >= minRequiredMatches) {
+        return true;
+      }
+    }
+    
+    // Also check for overlapping patterns (like RRB and RBB from RRBB)
+    if (activeFilters.length === 4) {
+      // Check first 3: RRB
+      const firstThree = activeFilters.slice(0, 3);
+      if (checkSocketPattern(sublimationSocketOrder, firstThree)) {
+        return true;
+      }
+      
+      // Check last 3: RBB  
+      const lastThree = activeFilters.slice(1, 4);
+      if (checkSocketPattern(sublimationSocketOrder, lastThree)) {
+        return true;
+      }
+      
+      // Check middle 3: RBB (positions 1,2,3)
+      const middleThree = activeFilters.slice(1, 4);
+      if (checkSocketPattern(sublimationSocketOrder, middleThree)) {
+        return true;
+      }
+    }
+    
+    return false;
+  });
+
+  const handleSocketOrderChange = (index: number, value: string) => {
+    const newSocketOrder = [...socketOrder];
+    newSocketOrder[index] = value;
+    setSocketOrder(newSocketOrder);
+  };
+
+  const resetSocketOrder = () => {
+    setSocketOrder(['', '', '', '']);
+  };
 
   return (
     <>
+      {/* Socket Order Filter */}
+      <SocketOrderFilter
+        socketOrder={socketOrder}
+        onSocketOrderChange={handleSocketOrderChange}
+        onReset={resetSocketOrder}
+      />
+
+      {/* DataTable */}
       <DataTable rows={filteredRows} headers={headers}>
         {({ rows, headers, getTableProps, getHeaderProps, getRowProps }) => (
           <>
