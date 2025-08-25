@@ -71,7 +71,7 @@ const SocketOrderFilter = ({
       borderRadius: '4px'
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-        <h3 style={{ margin: 0 }}>Socket Order Filter</h3>
+        <h3 style={{ margin: 0 }}>Sublimations</h3>
         <a 
           href="https://www.wakfu.com/en/forum/143-guides/241241-updated-sublimations" 
           target="_blank" 
@@ -92,10 +92,6 @@ const SocketOrderFilter = ({
           Data Source
         </a>
       </div>
-      <p style={{ marginBottom: '1rem', fontSize: '0.875rem', color: '#666' }}>
-        Filter by exact socket order. Yellow acts as a wild card that matches any color. Order matters.
-      </p>
-      
       <Grid>
         {socketOrder.map((socket, index) => (
           <Column lg={3} md={6} sm={4} key={index}>
@@ -135,29 +131,13 @@ const SocketOrderFilter = ({
                   <SelectItem key={option.value} value={option.value} text={option.text} />
                 ))}
               </Select>
-              {socket && socket !== 'Y' && getSocketImage(socket) && (
+              {socket && getSocketImage(socket) && (
                 <img 
                   src={getSocketImage(socket)!} 
                   alt={`${socket} Socket`} 
                   style={{ width: '20px', height: '20px' }}
                   title={`${socket} Socket`}
                 />
-              )}
-              {socket === 'Y' && (
-                <div style={{ 
-                  width: '20px', 
-                  height: '20px', 
-                  backgroundColor: '#f1c40f', 
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '12px',
-                  fontWeight: 'bold',
-                  color: 'white'
-                }}>
-                  ?
-                </div>
               )}
             </div>
           </Column>
