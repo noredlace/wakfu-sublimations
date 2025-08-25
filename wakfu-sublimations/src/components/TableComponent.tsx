@@ -70,7 +70,28 @@ const SocketOrderFilter = ({
       marginBottom: '1rem',
       borderRadius: '4px'
     }}>
-      <h3 style={{ marginBottom: '1rem', marginTop: 0 }}>Socket Order Filter</h3>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+        <h3 style={{ margin: 0 }}>Socket Order Filter</h3>
+        <a 
+          href="https://www.wakfu.com/en/forum/143-guides/241241-updated-sublimations" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '8px',
+            color: '#0f62fe',
+            textDecoration: 'none',
+            fontSize: '0.875rem'
+          }}
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M8.5 1.5a.5.5 0 0 0-1 0V8a.5.5 0 0 0 .147.354l2.5 2.5a.5.5 0 0 0 .708-.708L8.5 8.707V1.5z"/>
+            <path d="M8 0a8 8 0 1 0 8 8 8 8 0 0 0-8-8z"/>
+          </svg>
+          Data Source
+        </a>
+      </div>
       <p style={{ marginBottom: '1rem', fontSize: '0.875rem', color: '#666' }}>
         Filter by exact socket order. Yellow acts as a wild card that matches any color. Order matters.
       </p>
@@ -157,19 +178,16 @@ const rows = sublimations.map((sublimation) => ({
     name: sublimation.Name,
     socket: sublimation.Socket1 + sublimation.Socket2 + sublimation.Socket3,
     socket1: sublimation.Socket1,
-    socket1Value: sublimation.Socket1Value,
     socket2: sublimation.Socket2,
-    socket2Value: sublimation.Socket2Value,
     socket3: sublimation.Socket3,
-    socket3Value: sublimation.Socket3Value,
-    tier1: sublimation['I (Rare)'],
-    tier2: sublimation['II (Mythical)'],
-    tier3: sublimation['III (Legendary)'],
+    tier1: sublimation.Tier1,
+    tier2: sublimation.Tier2,
+    tier3: sublimation.Tier3,
     maxLevel: sublimation.MaxLevel,
     obtainedFrom: sublimation.ObtainedFrom,
     sincePatch: sublimation.SincePatch,
     notes: sublimation.Notes
-}));
+})).sort((a, b) => a.name.localeCompare(b.name));
 
 const headers = [
   {
