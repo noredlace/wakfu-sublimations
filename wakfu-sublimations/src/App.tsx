@@ -1,14 +1,18 @@
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
+import { Button, Header, HeaderName } from '@carbon/react'
 import './App.css'
-import { Button } from '@carbon/react'
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
     <>
+    <Header>
+            <HeaderName prefix="Wakfu Sublimations">
+              </HeaderName>
+          </Header>
       <div>
         <a href="https://vite.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
@@ -22,9 +26,7 @@ function App() {
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
         </button>
-        <Button onClick={() => setCount((count) => count + 1)}>
-          Click me {count}
-        </Button>
+        <Button onClick={() => setCount((count) => count + 1)}>cc is {count}</Button>
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>
