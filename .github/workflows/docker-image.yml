@@ -7,13 +7,25 @@ on:
     branches: [ "main" ]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
-      working-directory: wakfu-sublimations-site
+      run: docker build . --file Dockerfile --tag wakfu-sublimations:test
+      working-directory: wakfu-sublimations
+
+    - name: Test the Docker image
+      run: |
+        docker run --rm wakfu-sublimations:test nginx -t
+        docker run --rm -d --name test-container -p 8080:80 wakfu-sublimations:test
+        sleep 10
+        curl -f http://localhost:8080/ || exit 1
+        docker stop test-container
+      working-directory: wakfu-sublimations
