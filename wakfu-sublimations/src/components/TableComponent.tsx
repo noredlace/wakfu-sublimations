@@ -6,13 +6,13 @@ import sublimations from '../assets/data/sublimations.json'
 const getSocketImage = (socketLetter: string) => {
   switch (socketLetter) {
     case 'G':
-      return '/src/assets/images/GreenSocket.png';
+      return '/GreenSocket.png';
     case 'R':
-      return '/src/assets/images/RedSocket.png';
+      return '/RedSocket.png';
     case 'B':
-      return '/src/assets/images/BlueSocket.png';
+      return '/BlueSocket.png';
     case 'Y':
-      return '/src/assets/images/YellowSocket.png';
+      return '/YellowSocket.png';
     default:
       return null;
   }
