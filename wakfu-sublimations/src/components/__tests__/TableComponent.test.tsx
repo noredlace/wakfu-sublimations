@@ -22,7 +22,7 @@ describe('TableComponent', () => {
 
   describe('Component Rendering', () => {
     it('renders the component with sublimations data', () => {
-      render(<TableComponent />)
+      render(<TableComponent activeTab="regular" />)
       
       expect(screen.getByText('Sublimations')).toBeInTheDocument()
       expect(screen.getByText('Test Sublimation 1')).toBeInTheDocument()
@@ -31,7 +31,7 @@ describe('TableComponent', () => {
     })
 
     it('renders socket filter controls', () => {
-      render(<TableComponent />)
+      render(<TableComponent activeTab="regular" />)
       
       expect(screen.getByText('Socket Filtering:')).toBeInTheDocument()
       expect(screen.getByText('Reset Socket Order')).toBeInTheDocument()
@@ -44,14 +44,14 @@ describe('TableComponent', () => {
     })
 
     it('renders search functionality', () => {
-      render(<TableComponent />)
+      render(<TableComponent activeTab="regular" />)
       
       const searchInput = screen.getByPlaceholderText('Search sublimations...')
       expect(searchInput).toBeInTheDocument()
     })
 
     it('renders data table with correct headers', () => {
-      render(<TableComponent />)
+      render(<TableComponent activeTab="regular" />)
       
       expect(screen.getByText('Name')).toBeInTheDocument()
       expect(screen.getByText('Socket')).toBeInTheDocument()
@@ -68,7 +68,7 @@ describe('TableComponent', () => {
   describe('Search Functionality', () => {
     it('filters sublimations by name', async () => {
       const user = userEvent.setup()
-      render(<TableComponent />)
+      render(<TableComponent activeTab="regular" />)
       
       const searchInput = screen.getByPlaceholderText('Search sublimations...')
       await user.type(searchInput, 'Test Sublimation 1')
@@ -80,7 +80,7 @@ describe('TableComponent', () => {
 
     it('filters sublimations by socket pattern', async () => {
       const user = userEvent.setup()
-      render(<TableComponent />)
+      render(<TableComponent activeTab="regular" />)
       
       const searchInput = screen.getByPlaceholderText('Search sublimations...')
       await user.type(searchInput, 'RBG')
@@ -91,7 +91,7 @@ describe('TableComponent', () => {
 
     it('filters sublimations by tier effect', async () => {
       const user = userEvent.setup()
-      render(<TableComponent />)
+      render(<TableComponent activeTab="regular" />)
       
       const searchInput = screen.getByPlaceholderText('Search sublimations...')
       await user.type(searchInput, 'tier 1 effect')
@@ -102,7 +102,7 @@ describe('TableComponent', () => {
 
     it('filters sublimations by source', async () => {
       const user = userEvent.setup()
-      render(<TableComponent />)
+      render(<TableComponent activeTab="regular" />)
       
       const searchInput = screen.getByPlaceholderText('Search sublimations...')
       await user.type(searchInput, 'Test Source')
@@ -113,7 +113,7 @@ describe('TableComponent', () => {
 
     it('clears search results when input is cleared', async () => {
       const user = userEvent.setup()
-      render(<TableComponent />)
+      render(<TableComponent activeTab="regular" />)
       
       const searchInput = screen.getByPlaceholderText('Search sublimations...')
       await user.type(searchInput, 'Test Sublimation 1')
@@ -131,7 +131,7 @@ describe('TableComponent', () => {
 
   describe('Socket Filtering', () => {
     it('shows all results when no socket filters are set', () => {
-      render(<TableComponent />)
+      render(<TableComponent activeTab="regular" />)
       
       expect(screen.getByText('Test Sublimation 1')).toBeInTheDocument()
       expect(screen.getByText('Test Sublimation 2')).toBeInTheDocument()
@@ -140,7 +140,7 @@ describe('TableComponent', () => {
 
     it('shows all results when less than 3 socket filters are set', async () => {
       const user = userEvent.setup()
-      render(<TableComponent />)
+      render(<TableComponent activeTab="regular" />)
       
       // Set only 2 socket filters
       const socketSelects = screen.getAllByRole('combobox')
@@ -155,7 +155,7 @@ describe('TableComponent', () => {
 
     it('filters by exact 3-socket pattern', async () => {
       const user = userEvent.setup()
-      render(<TableComponent />)
+      render(<TableComponent activeTab="regular" />)
       
       // Set 3 socket filters: R, B, G
       const socketSelects = screen.getAllByRole('combobox')
@@ -171,7 +171,7 @@ describe('TableComponent', () => {
 
     it('filters by 4-socket pattern using sliding window', async () => {
       const user = userEvent.setup()
-      render(<TableComponent />)
+      render(<TableComponent activeTab="regular" />)
       
       // Set 4 socket filters: R, R, B, B
       const socketSelects = screen.getAllByRole('combobox')
@@ -189,7 +189,7 @@ describe('TableComponent', () => {
 
     it('handles yellow wild card sockets', async () => {
       const user = userEvent.setup()
-      render(<TableComponent />)
+      render(<TableComponent activeTab="regular" />)
       
       // Set 3 socket filters: Y, R, B (Y is wild)
       const socketSelects = screen.getAllByRole('combobox')
@@ -205,7 +205,7 @@ describe('TableComponent', () => {
 
     it('resets socket filters when reset button is clicked', async () => {
       const user = userEvent.setup()
-      render(<TableComponent />)
+      render(<TableComponent activeTab="regular" />)
       
       // Set some socket filters
       const socketSelects = screen.getAllByRole('combobox')
@@ -230,7 +230,7 @@ describe('TableComponent', () => {
 
   describe('Socket Image Rendering', () => {
     it('renders socket images correctly', () => {
-      render(<TableComponent />)
+      render(<TableComponent activeTab="regular" />)
       
       // Check that socket images are rendered in the table
       const socketImages = screen.getAllByAltText(/Socket$/)
@@ -239,7 +239,7 @@ describe('TableComponent', () => {
 
     it('renders socket images in filter controls', async () => {
       const user = userEvent.setup()
-      render(<TableComponent />)
+      render(<TableComponent activeTab="regular" />)
       
       // Set a socket filter
       const socketSelects = screen.getAllByRole('combobox')
@@ -253,7 +253,7 @@ describe('TableComponent', () => {
 
   describe('Data Source Link', () => {
     it('renders data source link with correct attributes', () => {
-      render(<TableComponent />)
+      render(<TableComponent activeTab="regular" />)
       
       const dataSourceLink = screen.getByText('Data Source')
       expect(dataSourceLink).toBeInTheDocument()
@@ -266,7 +266,7 @@ describe('TableComponent', () => {
   describe('Combined Search and Socket Filtering', () => {
     it('combines search and socket filtering correctly', async () => {
       const user = userEvent.setup()
-      render(<TableComponent />)
+      render(<TableComponent activeTab="regular" />)
       
       // Set search term
       const searchInput = screen.getByPlaceholderText('Search sublimations...')
@@ -287,7 +287,7 @@ describe('TableComponent', () => {
 
   describe('Accessibility', () => {
     it('has proper ARIA labels and roles', () => {
-      render(<TableComponent />)
+      render(<TableComponent activeTab="regular" />)
       
       // Check for search input accessibility
       const searchInput = screen.getByPlaceholderText('Search sublimations...')
@@ -304,7 +304,7 @@ describe('TableComponent', () => {
 
     it('supports keyboard navigation', async () => {
       const user = userEvent.setup()
-      render(<TableComponent />)
+      render(<TableComponent activeTab="regular" />)
       
       // Test tab navigation
       await user.tab()
