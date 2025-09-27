@@ -125,17 +125,6 @@ const SocketOrderFilter = ({
         </a>
       </div>
       
-      <div style={{ 
-        marginBottom: '1rem', 
-        padding: '0.75rem', 
-        backgroundColor: '#fff3cd', 
-        border: '1px solid #ffeaa7', 
-        borderRadius: '4px',
-        fontSize: '0.875rem',
-        color: '#856404'
-      }}>
-        💡 <strong>Socket Filtering:</strong> Fill at least 3 socket positions to filter results. Sublimations must match exactly 3 socket colors.
-      </div>
       <Grid>
         {socketOrder.map((socket, index) => (
           <Column lg={3} md={6} sm={4} key={index}>
