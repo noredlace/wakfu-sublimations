@@ -1,6 +1,36 @@
 import { DataTable, Table, TableHead, TableRow, TableHeader, TableBody, TableCell, TableToolbar, TableToolbarSearch, TableToolbarContent, Button, Grid, Column, Select, SelectItem } from '@carbon/react'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import sublimations from '../assets/data/sublimations.json'
+import epicSublimations from '../assets/data/epic-sublimations.json'
+import relicSublimations from '../assets/data/relic-sublimations.json'
+import type { SublimationType } from '../App'
+
+// Type definitions for different sublimation data structures
+interface RegularSublimation {
+  id: string;
+  name: string;
+  socket: string;
+  socket1: string;
+  socket2: string;
+  socket3: string;
+  tier1: string;
+  tier2: string;
+  tier3: string;
+  maxLevel: string;
+  obtainedFrom: string;
+  sincePatch: string;
+  notes: string;
+}
+
+interface EpicRelicSublimation {
+  id: string;
+  name: string;
+  effect: string;
+  obtainedFrom: string;
+  sincePatch: string;
+}
+
+type SublimationRow = RegularSublimation | EpicRelicSublimation;
 
 // Helper function to get socket image based on letter
 const getSocketImage = (socketLetter: string) => {
@@ -49,11 +79,13 @@ const renderSocketCell = (value: string) => {
 const SocketOrderFilter = ({ 
   socketOrder, 
   onSocketOrderChange, 
-  onReset 
+  onReset,
+  title = "Sublimations"
 }: {
   socketOrder: string[];
   onSocketOrderChange: (index: number, value: string) => void;
   onReset: () => void;
+  title?: string;
 }) => {
   const socketOptions = [
     { value: '', text: 'Any Color' },
@@ -71,7 +103,7 @@ const SocketOrderFilter = ({
       borderRadius: '4px'
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-        <h3 style={{ margin: 0 }}>Sublimations</h3>
+        <h3 style={{ margin: 0 }}>{title}</h3>
         <a 
           href="https://www.wakfu.com/en/forum/143-guides/241241-updated-sublimations" 
           target="_blank" 
@@ -91,6 +123,18 @@ const SocketOrderFilter = ({
           </svg>
           Data Source
         </a>
+      </div>
+      
+      <div style={{ 
+        marginBottom: '1rem', 
+        padding: '0.75rem', 
+        backgroundColor: '#fff3cd', 
+        border: '1px solid #ffeaa7', 
+        borderRadius: '4px',
+        fontSize: '0.875rem',
+        color: '#856404'
+      }}>
+        💡 <strong>Socket Filtering:</strong> Fill at least 3 socket positions to filter results. Sublimations must match exactly 3 socket colors.
       </div>
       <Grid>
         {socketOrder.map((socket, index) => (
@@ -153,64 +197,82 @@ const SocketOrderFilter = ({
   );
 };
 
-const rows = sublimations.map((sublimation) => ({
-    id: sublimation.Name,
-    name: sublimation.Name,
-    socket: sublimation.Socket1 + sublimation.Socket2 + sublimation.Socket3,
-    socket1: sublimation.Socket1,
-    socket2: sublimation.Socket2,
-    socket3: sublimation.Socket3,
-    tier1: sublimation.Tier1,
-    tier2: sublimation.Tier2,
-    tier3: sublimation.Tier3,
-    maxLevel: sublimation.MaxLevel,
-    obtainedFrom: sublimation.ObtainedFrom,
-    sincePatch: sublimation.SincePatch,
-    notes: sublimation.Notes
-})).sort((a, b) => a.name.localeCompare(b.name));
+interface TableComponentProps {
+  activeTab: SublimationType
+}
 
-const headers = [
-  {
-    key: 'name',
-    header: 'Name',
-  },
-  {
-      key: 'socket',
-      header: 'Socket',
-  },
-  {
-      key: 'tier1',
-      header: 'Tier 1',
-  },
-  {
-      key: 'tier2',
-      header: 'Tier 2',
-  },
-  {
-      key: 'tier3',
-      header: 'Tier 3',
-  },
-  {
-      key: 'maxLevel',
-      header: 'Max Level',
-  },
-  {
-      key: 'obtainedFrom',
-      header: 'Obtained From',
-  },
-  {
-      key: 'sincePatch',
-      header: 'Since Patch',
-  },
-  {
-      key: 'notes',
-      header: 'Notes',
-  }
-];
-
-export default function TableComponent() {
+export default function TableComponent({ activeTab }: TableComponentProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [socketOrder, setSocketOrder] = useState<string[]>(['', '', '', '']);
+
+  // Get data and headers based on active tab
+  const { rows, headers, showSocketFilter } = useMemo((): { rows: SublimationRow[], headers: { key: string; header: string }[], showSocketFilter: boolean } => {
+    if (activeTab === 'regular') {
+      const regularRows: RegularSublimation[] = sublimations.map((sublimation) => ({
+        id: sublimation.Name,
+        name: sublimation.Name,
+        socket: sublimation.Socket1 + sublimation.Socket2 + sublimation.Socket3,
+        socket1: sublimation.Socket1,
+        socket2: sublimation.Socket2,
+        socket3: sublimation.Socket3,
+        tier1: sublimation.Tier1,
+        tier2: sublimation.Tier2,
+        tier3: sublimation.Tier3,
+        maxLevel: sublimation.MaxLevel,
+        obtainedFrom: sublimation.ObtainedFrom,
+        sincePatch: sublimation.SincePatch,
+        notes: sublimation.Notes
+      })).sort((a, b) => a.name.localeCompare(b.name));
+
+      const regularHeaders = [
+        { key: 'name', header: 'Name' },
+        { key: 'socket', header: 'Socket' },
+        { key: 'tier1', header: 'Tier 1' },
+        { key: 'tier2', header: 'Tier 2' },
+        { key: 'tier3', header: 'Tier 3' },
+        { key: 'maxLevel', header: 'Max Level' },
+        { key: 'obtainedFrom', header: 'Obtained From' },
+        { key: 'sincePatch', header: 'Since Patch' },
+        { key: 'notes', header: 'Notes' }
+      ];
+
+      return { rows: regularRows, headers: regularHeaders, showSocketFilter: true };
+    } else if (activeTab === 'epic') {
+      const epicRows: EpicRelicSublimation[] = epicSublimations.map((sublimation) => ({
+        id: sublimation.Name,
+        name: sublimation.Name,
+        effect: sublimation.Effect,
+        obtainedFrom: sublimation["Obtained From"],
+        sincePatch: String(sublimation["Since Patch"] || '')
+      })).sort((a, b) => a.name.localeCompare(b.name));
+
+      const epicHeaders = [
+        { key: 'name', header: 'Name' },
+        { key: 'effect', header: 'Effect' },
+        { key: 'obtainedFrom', header: 'Obtained From' },
+        { key: 'sincePatch', header: 'Since Patch' }
+      ];
+
+      return { rows: epicRows, headers: epicHeaders, showSocketFilter: false };
+    } else { // relic
+      const relicRows: EpicRelicSublimation[] = relicSublimations.map((sublimation) => ({
+        id: sublimation.Name,
+        name: sublimation.Name,
+        effect: sublimation.Effect,
+        obtainedFrom: sublimation["Obtained From"],
+        sincePatch: String(sublimation["Since Patch"] || '')
+      })).sort((a, b) => a.name.localeCompare(b.name));
+
+      const relicHeaders = [
+        { key: 'name', header: 'Name' },
+        { key: 'effect', header: 'Effect' },
+        { key: 'obtainedFrom', header: 'Obtained From' },
+        { key: 'sincePatch', header: 'Since Patch' }
+      ];
+
+      return { rows: relicRows, headers: relicHeaders, showSocketFilter: false };
+    }
+  }, [activeTab]);
 
   // Helper function to check if a socket pattern matches
   const checkSocketPattern = (sublimationSockets: string[], pattern: string[]): boolean => {
@@ -230,72 +292,50 @@ export default function TableComponent() {
 
   // Apply both search and socket order filters
   const filteredRows = rows.filter(sublimation => {
-    // Text search filter
-    const searchMatch = 
-      sublimation.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      sublimation.socket.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      sublimation.tier1.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      sublimation.tier2.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      sublimation.tier3.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      sublimation.maxLevel.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      sublimation.obtainedFrom.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      sublimation.sincePatch.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      sublimation.notes.toLowerCase().includes(searchTerm.toLowerCase());
+    // Text search filter - handle different data structures
+    let searchMatch = false;
+    
+    if (activeTab === 'regular') {
+      const regularSublimation = sublimation as RegularSublimation;
+      searchMatch = 
+        regularSublimation.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        regularSublimation.socket.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        regularSublimation.tier1.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        regularSublimation.tier2.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        regularSublimation.tier3.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        regularSublimation.maxLevel.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        regularSublimation.obtainedFrom.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        regularSublimation.sincePatch.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        regularSublimation.notes.toLowerCase().includes(searchTerm.toLowerCase());
+    } else {
+      // Epic and Relic sublimations
+      const epicRelicSublimation = sublimation as EpicRelicSublimation;
+      searchMatch = 
+        epicRelicSublimation.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        epicRelicSublimation.effect.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        epicRelicSublimation.obtainedFrom.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        epicRelicSublimation.sincePatch.toLowerCase().includes(searchTerm.toLowerCase());
+    }
 
     if (!searchMatch) return false;
 
-    // Socket order filter - check if any socket order filters are set
+    // Socket order filter - only apply to regular sublimations
+    if (activeTab !== 'regular') return true;
+
     const hasSocketOrderFilters = socketOrder.some(filter => filter !== '');
     if (!hasSocketOrderFilters) return true;
 
     // Get the non-empty filters
     const activeFilters = socketOrder.filter(filter => filter !== '');
     
+    // Require at least 3 socket filters to be filled for socket filtering to work
+    if (activeFilters.length < 3) return true;
+    
     // Get the sublimation's socket order
-    const sublimationSocketOrder = [sublimation.socket1, sublimation.socket2, sublimation.socket3];
+    const regularSublimation = sublimation as RegularSublimation;
+    const sublimationSocketOrder = [regularSublimation.socket1, regularSublimation.socket2, regularSublimation.socket3];
     
-    // We need at least 3 out of 4 filters to match (or all active filters if less than 4)
-    const minRequiredMatches = Math.min(3, activeFilters.length);
-    
-    // Check if any valid 3-color combination exists
-    // For RRBB, we need to check if RRB or RBB can be found in the sublimation
-    
-    // Try to find any valid 3-color combination
-    for (let startPos = 0; startPos <= sublimationSocketOrder.length - minRequiredMatches; startPos++) {
-      let filterIndex = 0;
-      let sublimationIndex = startPos;
-      let currentMatchCount = 0;
-      
-      while (filterIndex < activeFilters.length && sublimationIndex < sublimationSocketOrder.length) {
-        const currentFilter = activeFilters[filterIndex];
-        const currentSublimationSocket = sublimationSocketOrder[sublimationIndex];
-        
-        // Yellow (Y) is wild and matches any color
-        if (currentFilter === 'Y') {
-          filterIndex++;
-          sublimationIndex++;
-          currentMatchCount++;
-          continue;
-        }
-        
-        // Check if the current socket matches the current filter
-        if (currentFilter === currentSublimationSocket) {
-          filterIndex++;
-          sublimationIndex++;
-          currentMatchCount++;
-        } else {
-          // Move to next sublimation socket to try to match
-          sublimationIndex++;
-        }
-      }
-      
-      // If we found enough matches, this row qualifies
-      if (currentMatchCount >= minRequiredMatches) {
-        return true;
-      }
-    }
-    
-    // Also check for overlapping patterns (like RRB and RBB from RRBB)
+    // Use sliding window to find 3-socket matches within the 4-socket pattern
     if (activeFilters.length === 4) {
       // Check first 3: RRB
       const firstThree = activeFilters.slice(0, 3);
@@ -312,6 +352,11 @@ export default function TableComponent() {
       // Check middle 3: RBB (positions 1,2,3)
       const middleThree = activeFilters.slice(1, 4);
       if (checkSocketPattern(sublimationSocketOrder, middleThree)) {
+        return true;
+      }
+    } else if (activeFilters.length === 3) {
+      // Direct match for 3-socket pattern
+      if (checkSocketPattern(sublimationSocketOrder, activeFilters)) {
         return true;
       }
     }
@@ -331,12 +376,15 @@ export default function TableComponent() {
 
   return (
     <>
-      {/* Socket Order Filter */}
-      <SocketOrderFilter
-        socketOrder={socketOrder}
-        onSocketOrderChange={handleSocketOrderChange}
-        onReset={resetSocketOrder}
-      />
+      {/* Socket Order Filter - only show for regular sublimations */}
+      {showSocketFilter && (
+        <SocketOrderFilter
+          socketOrder={socketOrder}
+          onSocketOrderChange={handleSocketOrderChange}
+          onReset={resetSocketOrder}
+          title="Sublimations"
+        />
+      )}
 
       {/* DataTable */}
       <DataTable rows={filteredRows} headers={headers}>
@@ -346,7 +394,7 @@ export default function TableComponent() {
               <TableToolbarContent>
                 <TableToolbarSearch
                   persistent={true}
-                  placeholder="Search sublimations..."
+                  placeholder={`Search ${activeTab === 'regular' ? 'sublimations' : activeTab === 'epic' ? 'epic sublimations' : 'relic sublimations'}...`}
                   onChange={(e) => {
                     if (typeof e === 'string') {
                       setSearchTerm(e);
