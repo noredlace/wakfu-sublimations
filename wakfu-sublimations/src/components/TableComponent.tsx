@@ -98,9 +98,10 @@ const SocketOrderFilter = ({
   return (
     <div style={{ 
       padding: '1rem', 
-      backgroundColor: '#f4f4f4', 
+      backgroundColor: 'var(--cds-layer-01)', 
       marginBottom: '1rem',
-      borderRadius: '4px'
+      borderRadius: '4px',
+      border: '1px solid var(--cds-border-subtle)'
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
         <h3 style={{ margin: 0 }}>{title}</h3>
@@ -133,14 +134,14 @@ const SocketOrderFilter = ({
               alignItems: 'center', 
               gap: '8px',
               padding: '8px',
-              border: '1px solid #e0e0e0',
+              border: '1px solid var(--cds-border-subtle)',
               borderRadius: '4px',
-              backgroundColor: socket ? '#f0f8ff' : '#ffffff'
+              backgroundColor: socket ? 'var(--cds-hover-ui)' : 'var(--cds-layer-01)'
             }}>
               <div style={{ position: 'relative' }}>
                 <div style={{
-                  backgroundColor: '#0f62fe',
-                  color: 'white',
+                  backgroundColor: 'var(--cds-button-primary)',
+                  color: 'var(--cds-text-on-color)',
                   borderRadius: '50%',
                   width: '20px',
                   height: '20px',

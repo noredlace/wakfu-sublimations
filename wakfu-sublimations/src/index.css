@@ -1,1 +1,70 @@
 @import '@carbon/styles/css/styles.css';
+
+/* Apply Carbon's dark theme (g100) */
+[data-carbon-theme="g100"] {
+  /* This will automatically apply all Carbon dark theme variables */
+}
+
+/* Ensure the entire page has dark background */
+html, body {
+  background-color: var(--cds-background) !important;
+  color: var(--cds-text-primary) !important;
+  min-height: 100vh;
+}
+
+/* Ensure table containers have dark backgrounds */
+.cds--data-table-container,
+.cds--table-container,
+.cds--data-table {
+  background-color: var(--cds-background) !important;
+}
+
+/* Ensure empty table states have dark backgrounds */
+.cds--data-table tbody:empty::after {
+  background-color: var(--cds-background) !important;
+  color: var(--cds-text-primary) !important;
+}
+
+/* Ensure all possible table and content areas have dark backgrounds */
+.cds--content,
+.cds--grid,
+.cds--row,
+.cds--col,
+.cds--table-toolbar,
+.cds--table-toolbar-content,
+.cds--table-toolbar-search,
+.cds--search,
+.cds--search-input {
+  background-color: var(--cds-background) !important;
+  color: var(--cds-text-primary) !important;
+}
+
+/* Ensure the main content area has dark background */
+main,
+#root,
+#root > div {
+  background-color: var(--cds-background) !important;
+  color: var(--cds-text-primary) !important;
+  min-height: 100vh;
+}
+
+/* Target any remaining white backgrounds */
+* {
+  background-color: var(--cds-background) !important;
+}
+
+/* But allow Carbon components to use their own backgrounds */
+.cds--data-table,
+.cds--data-table thead,
+.cds--data-table tbody,
+.cds--data-table tr,
+.cds--data-table td,
+.cds--data-table th,
+.cds--select,
+.cds--select-input,
+.cds--btn,
+.cds--header,
+.cds--list-box__menu,
+.cds--list-box__menu-item {
+  background-color: inherit !important;
+}
